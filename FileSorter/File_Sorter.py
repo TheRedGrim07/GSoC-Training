@@ -30,6 +30,6 @@ def file_sorter(base_path):
         shutil.move(source_folder, destination_folder)
         print(f'{file_name} moved to {destination_folder}')
 
-    print("success")
+    print("success!!")
 
 file_sorter(r'C:\Users\ayush\gsoc-training\FileSorter\junk')
