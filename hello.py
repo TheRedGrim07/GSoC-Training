@@ -1,1 +1,1 @@
-print(hello GSoC)
+print('hello GSoC')
