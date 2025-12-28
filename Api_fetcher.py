@@ -16,10 +16,10 @@ with open("Users.csv",mode="w",newline="") as file:
     writer.writerow(['Name','Email','City'])
 
     for user in users:
-        name=user['name']
-        email=user['email']
-        city=user["address"]["city"]
+        name=user.get('name',"N/A")
+        email=user.get('email',"N/A")
+        city=user.get("address",'{}').get("city","N/A")
 
-        writer.writerow([name,email,city])
+        writer.writerow([name," || ",email," || ",city])
 
 print("Success")
