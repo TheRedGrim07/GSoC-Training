@@ -22,10 +22,16 @@ class ApiFetcher:
                 print("Failed to fetch data. Status code:", response.status_code)
     
     def save_to_csv(self,filename,location):
-        filename=path.join(location, filename)
-        with open(filename, mode='w', newline='') as file:
+        
+        file_path=path.join(location, filename)
+        file_exist=path.exists(file_path)
+
+
+        with open(file_path, mode='a', newline='') as file:
             writer=csv.writer(file)
-            writer.writerow(['Name', 'Email', 'City','Latitude'])
+            if not file_exist:
+                writer.writerow(['Name', 'Email', 'City','Latitude'])
+
             for user in self.users:
                 name=user.get('name', 'n/a')
                 email=user.get('email','n/a')
@@ -35,7 +41,7 @@ class ApiFetcher:
                     if city.lower()==self.city.lower():
                         writer.writerow([name,email,city,lat])
                 else:
-                    continue
+                    writer.writerow([name,email,city,lat])
 
                 
                 
