@@ -7,3 +7,4 @@ Day 4: Refactored API fetcher into OOP class
 Day 5: Added argpharse
 Day 6: Added db_handler
 Day 7: Built pipeline and merged Db_handler and Api_fetcher
+Day 8: Built first Flask Serve

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSoC Training - Day 8 Cheat Sheet</title>
+    <style>
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: black;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #34495e;
+            background-color: #ecf0f1;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background-color: #f8f9fa;
+            padding: 2px 5px;
+            border-radius: 3px;
+            color: #e74c3c;
+        }
+        pre {
+            background-color: #2d3436;
+            color: #dfe6e9;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .comment { color: #a4b0be; font-style: italic; }
+        .keyword { color: #ff7675; font-weight: bold; }
+        .string { color: #55efc4; }
+        .function { color: #74b9ff; }
+        
+        .rules-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .rules-box h3 {
+            background-color: transparent;
+            color: #856404;
+            margin-top: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📜 Day 8: The "Waiter" Protocol (Flask)</h1>
+    
+    <p><strong>Core Concept:</strong> The Server (Waiter) waits for a Request (Order) at a specific Route (Table) and returns a Response (Food).</p>
+
+    <h2>1. The Server (server.py)</h2>
+    <pre><code><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, request
+
+app = Flask(__name__)
+
+<span class="comment"># Pattern 1: The Basic Route (GET)</span>
+<span class="comment"># URL: http://localhost:5000/</span>
+@app.route(<span class="string">"/"</span>)
+<span class="keyword">def</span> <span class="function">home</span>():
+    <span class="comment"># ALWAYS return a Dictionary (JSON), never plain text</span>
+    <span class="keyword">return</span> {<span class="string">"status"</span>: <span class="string">"online"</span>, <span class="string">"system"</span>: <span class="string">"GSoC Node 1"</span>}
+
+<span class="comment"># Pattern 2: The Path Variable (GET)</span>
+<span class="comment"># URL: http://localhost:5000/user/Ayush</span>
+<span class="comment"># Use this for specific resources (IDs, names)</span>
+@app.route(<span class="string">"/user/&lt;name&gt;"</span>)
+<span class="keyword">def</span> <span class="function">get_user</span>(name):
+    <span class="comment"># 'name' is passed as an argument to the function</span>
+    <span class="keyword">return</span> {
+        <span class="string">"user"</span>: name, 
+        <span class="string">"length"</span>: len(name) <span class="comment"># Python's length function</span>
+    }
+
+<span class="comment"># Pattern 3: The Query Parameter (GET)</span>
+<span class="comment"># URL: http://localhost:5000/search?q=python&page=1</span>
+<span class="comment"># Use this for filters, search, or optional settings</span>
+@app.route(<span class="string">"/search"</span>)
+<span class="keyword">def</span> <span class="function">search</span>():
+    <span class="comment"># request.args.get(key, default_value, type)</span>
+    <span class="comment"># ALWAYS provide a default value to prevent crashes!</span>
+    query = request.args.get(<span class="string">'q'</span>, <span class="string">"nothing"</span>) 
+    page = request.args.get(<span class="string">'page'</span>, 1, type=int) 
+    
+    <span class="keyword">return</span> {<span class="string">"searching_for"</span>: query, <span class="string">"page_number"</span>: page}
+
+<span class="comment"># Pattern 4: The Secure Envelope (POST)</span>
+<span class="comment"># URL: http://localhost:5000/login</span>
+<span class="comment"># Use this for sending private data (passwords, large text)</span>
+@app.route(<span class="string">"/login"</span>, methods=[<span class="string">'POST'</span>])
+<span class="keyword">def</span> <span class="function">login</span>():
+    <span class="comment"># 1. Open the Envelope (Body)</span>
+    data = request.get_json()
+    
+    <span class="comment"># 2. Safety Check (Safe Navigation)</span>
+    <span class="keyword">if not</span> data:
+        <span class="keyword">return</span> {<span class="string">"error"</span>: <span class="string">"No data sent"</span>}, 400
+        
+    <span class="comment"># 3. Process</span>
+    username = data.get(<span class="string">'username'</span>)
+    <span class="keyword">return</span> {<span class="string">"status"</span>: <span class="string">"received"</span>, <span class="string">"user"</span>: username}
+
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    app.run(debug=<span class="keyword">True</span>) <span class="comment"># debug=True helps you see errors</span></code></pre>
+
+    <h2>2. The Client (client.py)</h2>
+    <p><em>Used to test POST requests since Chrome can't do it easily.</em></p>
+    <pre><code><span class="keyword">import</span> requests
+
+<span class="comment"># The Payload (The Letter inside the Envelope)</span>
+payload = {<span class="string">"username"</span>: <span class="string">"admin"</span>, <span class="string">"password"</span>: <span class="string">"123"</span>}
+
+<span class="comment"># The Handshake</span>
+<span class="comment"># json=payload automatically formats it nicely</span>
+response = requests.post(<span class="string">"http://127.0.0.1:5000/login"</span>, json=payload)
+
+print(response.json())</code></pre>
+
+    <div class="rules-box">
+        <h3>⚠️ The Engineer's Rules</h3>
+        <ol>
+            <li><strong>Never Return Strings:</strong> Always return a Dictionary <code>{}</code>. APIs speak JSON.</li>
+            <li><strong>Never Trust Input:</strong> Use <code>request.args.get('key', default)</code> to handle missing data.</li>
+            <li><strong>GET vs POST:</strong>
+                <ul>
+                    <li><strong>GET:</strong> Data is in the <strong>URL</strong>. (Visible, Unsafe, Small).</li>
+                    <li><strong>POST:</strong> Data is in the <strong>Body</strong>. (Hidden, Secure, Large).</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+</div>
+
+</body>
+</html>
