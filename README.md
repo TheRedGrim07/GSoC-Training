@@ -10,3 +10,4 @@ Day 7: Built pipeline and merged Db_handler and Api_fetcher
 Day 8: Built first Flask Serve
 Day 9: Connected SQLite3 with Flask
 Day 10: Refactored Day 9 to a REST Architecture (One URL, multiple Methods)
+Day 11: Shifted to ORM(Object Relation Manager)
