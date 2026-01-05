@@ -1,5 +1,4 @@
-# GSoC 2026: My Personal Journey
-
+# GSoC 2026: The Master Plan
 This Repository is for GSoC practice
 
 Day 1: Added Hello GSoC + SetUP
