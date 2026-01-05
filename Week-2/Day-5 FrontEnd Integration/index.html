@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Manager</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        input { padding: 8px; margin-right: 10px; }
+        button { padding: 8px 15px; cursor: pointer; background-color: #28a745; color: white; border: none; }
+        button.delete { background-color: #dc3545; }
+        table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🎓 GSoC Student Manager</h2>
+
+    <div>
+        <input type="text" id="nameInput" placeholder="Student Name">
+        <input type="number" id="scoreInput" placeholder="Score">
+        <button onclick="addStudent()">Add Student</button>
+    </div>
+
+    <h3>Class List</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Score</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="studentTableBody">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    const BASE_URL = "http://127.0.0.1:5002/students";
+
+    // 1. ADD STUDENT (POST)
+    async function addStudent() {
+        const name = document.getElementById("nameInput").value;
+        const score = document.getElementById("scoreInput").value;
+
+        // Safety Check
+        if (!name) { alert("Please enter a name!"); return; }
+
+        const payload = { name: name, score: parseInt(score) };
+
+        // The Fetch API replaces requests.post()
+        await fetch(BASE_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        alert("Student Added!");
+        // Clear inputs and reload list
+        document.getElementById("nameInput").value = "";
+        document.getElementById("scoreInput").value = "";
+        loadStudents(); 
+    }
+
+    // 2. LOAD STUDENTS (GET)
+    // 2. LOAD STUDENTS (GET)
+    async function loadStudents() {
+        const response = await fetch(BASE_URL);
+        const data = await response.json();
+        
+        // Note: Check your server_orm.py. Did you use "students" or "Student" as the key?
+        // This line handles both cases automatically:
+        const students = data.students || data.Student || []; 
+
+        const tableBody = document.getElementById("studentTableBody");
+        tableBody.innerHTML = ""; // Clear the table first
+
+        // Loop through the list and create rows
+        students.forEach(student => {
+            const row = `
+                <tr>
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.score}</td>
+                    <td>
+                        <button class="delete" onclick="deleteStudent('${student.name}')">Delete</button>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    // 3. DELETE STUDENT (DELETE)
+    async function deleteStudent(name) {
+        if(!confirm(`Are you sure you want to delete ${name}?`)) return;
+
+        await fetch(BASE_URL, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: name })
+        });
+
+        loadStudents(); // Refresh the list automatically
+    }
+
+    // Load the list immediately when the page opens
+    loadStudents();
+</script>
+</body>
+</html>
+   

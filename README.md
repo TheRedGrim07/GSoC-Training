@@ -11,3 +11,4 @@ Day 8: Built first Flask Serve
 Day 9: Connected SQLite3 with Flask
 Day 10: Refactored Day 9 to a REST Architecture (One URL, multiple Methods)
 Day 11: Shifted to ORM(Object Relation Manager)
+Day 12: Connecting Backend and FrontEnd
