@@ -8,3 +8,17 @@
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+
+# --- Python GSoC Standard ---
+# 1. Virtual Environment (Heavy folder)
+venv/
+env/
+.env
+
+# 2. Bytecode (Junk files)
+__pycache__/
+*.pyc
+
+# 3. Database (Security Risk)
+*.db
+Students.db
