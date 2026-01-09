@@ -15,3 +15,6 @@ Day 11: Shifted to ORM(Object Relation Manager)
 Day 12: Connecting Backend and FrontEnd
 Day 13: Mastered Git
 Day 14: Built and Deployed a project:NanoLink
+Day 15: Automated Testing
+Day 16: Built Yt2Mate(Youtube downloader)
+Day 17: Built TaskMaster
